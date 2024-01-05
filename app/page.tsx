@@ -1,11 +1,28 @@
-import Image from "next/image";
-import Link from "next/link";
-import DemoGif from "@/images/landingPage/demo.gif"
 
-export default function Home() {
+import CarCard from "@/components/CarCard";
+import CustomFilter from "@/components/CustomFilter";
+import Hero from "@/components/Hero";
+import SearchBar from "@/components/SearchBar";
+import ShowMore from "@/components/ShowMore";
+import WhatWeOffer from "@/components/WhatWeOffer";
+import { fuels, yearsOfProduction } from "@/constants";
+import { fetchCars } from "@/lib/utils";
+import { HomeProps } from "@/types";
+
+export default async function Home({ searchParams }: HomeProps) {
+  const allCars = await fetchCars({
+    manufacturer: searchParams.manufacturer || "",
+    year: searchParams.year || 2022,
+    fuel: searchParams.fuel || "",
+    limit: searchParams.limit || 10,
+    model: searchParams.model || "",
+  });
+
+  const isDataEmpty = !Array.isArray(allCars) || allCars.length < 1 || !allCars;
+
   return (
-    <main className="">
-      <div className="relative isolate pt-14 dark:bg-gray-900">
+    <main className="overflow-hidden">
+      <div className="relative isolate dark:bg-gray-900">
         <div
           className="absolute inset-x-0 top-28 -z-10 transform-gpu overflow-hidden blur-3xl"
           aria-hidden="true"
@@ -19,49 +36,48 @@ export default function Home() {
           />
         </div>
 
-        <div className="py-12 sm:py-20 lg:pb-40">
-            <div className="mx-auto max-w-7xl px-6 lg:px-8">
-              <div className="mx-auto max-w-2xl text-center">
-                <h1 className="text-4xl font-bold tracking-tight sm:text-6xl">
-                  Chat with Anyone, anywhere!
-                </h1>
-                <p className="mt-6 text-lg leading-8 text-gray-600 dark:text-gray-300">
-                  You speak your language, they speak their language.{" "}
-                  <span className="text-indigo-600 dark:text-indigo-500">
-                    Let AI handle the translation.
-                  </span>
-                </p>
-                <div className="mt-10 flex items-center justify-center gap-x-6">
-                  <Link
-                    href="/chat"
-                    className="rounded-md bg-indigo-600 px-3.5 py-2.5 text-sm font-semibold text-white dark:text-white 
-                    shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible::outline-indigo-600"
-                  >
-                    Get started
-                  </Link>
-                  <Link
-                    href="/pricing"
-                    className="text-sm font-semibold leading-6 text-gray-900 dark:text-gray-300"
-                  >
-                    View Pricing <span aria-hidden="true">&#8594;</span>
-                  </Link>
-                </div>
+        <Hero />
+        <WhatWeOffer />
+
+      {/* ss */}
+        <div className='mt-12 sm:px-16 px-6 py-4 max-w-[1440px] mx-auto' id='discover'>
+          <div className='flex flex-col items-start justify-start gap-y-2.5 text-black-100'>
+            <h1 className='text-4xl font-extrabold'>Car Catalogue</h1>
+            <p>Explore out cars you might like</p>
+          </div>
+
+          <div className='mt-12 w-full flex justify-between items-center flex-wrap gap-5'>
+            <SearchBar />
+
+            <div className='flex justify-start flex-wrap items-center gap-2'>
+              <CustomFilter title='fuel' options={fuels} />
+              <CustomFilter title='year' options={yearsOfProduction} />
+            </div>
+          </div>
+
+          {!isDataEmpty ? (
+            <section>
+              <div className='grid 2xl:grid-cols-4 xl:grid-cols-3 md:grid-cols-2 grid-cols-1 w-full gap-8 pt-14'>
+                {allCars?.map((car) => (
+                  // eslint-disable-next-line react/jsx-key
+                  <CarCard car={car} />
+                ))}
               </div>
 
-              <div className="mt-16 flow-root sm:mt-24">
-                <div className="-m-2 rounded-xl bg-gray-900/5 p-2 ring-1 ring-inset ring-gray-900/10 lg:-m-4 lg:rounded-2xl lg:p-4">
-                  <Image 
-                    unoptimized
-                    src={DemoGif}
-                    alt="App screenshot"
-                    width={2432}
-                    height={1442}
-                    className="rounded-md shadow-2xl ring-1 ring-gray-900/10"
-                  />
-                </div>
-              </div>
+              <ShowMore
+                pageNumber={(searchParams.limit || 10) / 10}
+                isNext={(searchParams.limit || 10) > allCars.length}
+              />
+            </section>
+          ) : (
+            <div className='mt-16 flex justify-center items-center flex-col gap-2'>
+              <h2 className='text-black text-xl font-bold'>Oops, no results</h2>
+              <p>{allCars?.message}</p>
             </div>
-        </div>
+          )}
+      </div>
+
+      {/* ss */}
 
         <div 
           className="absolute inset-x-0 top-[calc(100%-13rem)] -z-10 transform-gpu overflow-hidden

@@ -1,4 +1,4 @@
-import LogoImage from "@logos/blogchatib_logo.png"
+import LogoImage from "@logos/logo.svg"
 import Link from "next/link"
 import { AspectRatio } from "./ui/aspect-ratio"
 import Image from "next/image"
