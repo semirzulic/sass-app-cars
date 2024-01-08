@@ -1,8 +1,10 @@
 
 import CarCard from "@/components/CarCard";
 import CustomFilter from "@/components/CustomFilter";
+import FeatureSection from "@/components/FeatureSection";
 import Hero from "@/components/Hero";
 import SearchBar from "@/components/SearchBar";
+import SectionBraker from "@/components/SectionBraker";
 import ShowMore from "@/components/ShowMore";
 import WhatWeOffer from "@/components/WhatWeOffer";
 import { fuels, yearsOfProduction } from "@/constants";
@@ -35,10 +37,10 @@ export default async function Home({ searchParams }: HomeProps) {
             }}
           />
         </div>
-
         <Hero />
+        <SectionBraker />
         <WhatWeOffer />
-
+        <FeatureSection />
       {/* ss */}
         <div className='mt-12 sm:px-16 px-6 py-4 max-w-[1440px] mx-auto' id='discover'>
           <div className='flex flex-col items-start justify-start gap-y-2.5 text-black-100'>
